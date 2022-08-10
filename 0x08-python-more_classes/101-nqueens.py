@@ -1,62 +1,89 @@
 #!/usr/bin/python3
-"""
-nqueens backtracking program to print the coordinates of n queens
-on an nxn grid such that they are all in non-attacking positions
-"""
-
-
 from sys import argv
 
-if __name__ == "__main__":
-    a = []
-    if len(argv) != 2:
-        print("Usage: nqueens N")
-        exit(1)
-    if argv[1].isdigit() is False:
-        print("N must be a number")
-        exit(1)
-    n = int(argv[1])
-    if n < 4:
-        print("N must be at least 4")
-        exit(1)
 
-    # initialize the answer list
-    for i in range(n):
-        a.append([i, None])
+class Chessboard:
+    """Represents a chessboard."""
+    def __init__(self, size):
+        """Initialize the data."""
+        self.size = size
+        self.cols = []
 
-    def already_exists(y):
-        """check that a queen does not already exist in that y value"""
-        for x in range(n):
-            if y == a[x][1]:
-                return True
-        return False
+    def place_in_next_row(self, col):
+        """Place in next row."""
+        self.cols.append(col)
 
-    def reject(x, y):
-        """determines whether or not to reject the solution"""
-        if (already_exists(y)):
-            return False
-        i = 0
-        while(i < x):
-            if abs(a[i][1] - y) == abs(i - x):
+    def remove_in_current_row(self):
+        """Remove in current row."""
+        return self.cols.pop()
+
+    def next_row_safe(self, col):
+        """Check if current col in the next row is safe."""
+        row = len(self.cols)
+        for q_col in self.cols:
+            if col == q_col:
                 return False
-            i += 1
+
+        for q_row, q_col in enumerate(self.cols):
+            if q_col - q_row == col - row:
+                return False
+
+        for q_row, q_col in enumerate(self.cols):
+            if self.size - q_col - q_row == self.size - col - row:
+                return False
+
         return True
 
-    def clear_a(x):
-        """clears the answers from the point of failure on"""
-        for i in range(x, n):
-            a[i][1] = None
+    def display(self):
+        """Display a valid solution."""
+        print('[', end='')
+        for row in range(self.size):
+            for col in range(self.size):
+                if col == self.cols[row]:
+                    print('[{}, {}]'.format(row, col), end='')
+                    if row < self.size - 1:
+                        print(', ', end='')
+        print(']')
 
-    def nqueens(x):
-        """recursive backtracking function to find the solution"""
-        for y in range(n):
-            clear_a(x)
-            if reject(x, y):
-                a[x][1] = y
-                if (x == n - 1):  # accepts the solution
-                    print(a)
-                else:
-                    nqueens(x + 1)  # moves on to next x value to continue
 
-    # start the recursive process at x = 0
-    nqueens(0)
+def solve(size):
+    """Solve the N queens problem."""
+    board = Chessboard(size)
+    row = col = 0
+    while True:
+        while col < size:
+            if board.next_row_safe(col):
+                board.place_in_next_row(col)
+                row += 1
+                col = 0
+                break
+            else:
+                col += 1
+
+        if col == size or row == size:
+            if row == size:
+                board.display()
+                board.remove_in_current_row()
+                row -= 1
+
+            try:
+                prev_col = board.remove_in_current_row()
+            except IndexError:
+                break
+
+            row -= 1
+            col = 1 + prev_col
+
+if len(argv) != 2:
+    print('Usage: nqueens N')
+    exit(1)
+try:
+    queens = int(argv[1])
+except ValueError:
+    print('N must be a number')
+    exit(1)
+if queens < 4:
+    print('N must be at least 4')
+    exit(1)
+
+solve(queens)
