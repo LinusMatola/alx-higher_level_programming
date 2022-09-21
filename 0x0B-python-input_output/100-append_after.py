@@ -1,16 +1,21 @@
 #!/usr/bin/python3
-"""append after module"""
+"""Module ´´100-append_after´´ with append_after function"""
 
 
 def append_after(filename="", search_string="", new_string=""):
-    """append a text after a substring line"""
+    """Function that  inserts a line of text to a file, after each line
+    containing a specific string
+    Args:
+        filename (str): string of the filename
+        search_string (str): text to look
+        new_string (str): text to append after.
+    """
+    final_txt = ""
+    with open(filename) as f:
+        for line in f:
+            final_txt += line
+            if search_string in line:
+                final_txt += new_string
 
-    with open(filename, 'r') as f:
-        content = f.readlines()
-        for (index, line) in enumerate(content):
-            if line.find(search_string) != -1:
-                content.insert(index+1, new_string)
-        new_content = "".join(content)
-    f = open(filename, 'w')
-    f.write(new_content)
-    f.close()
+    with open(filename, "w") as f:
+        f.write(final_txt)
