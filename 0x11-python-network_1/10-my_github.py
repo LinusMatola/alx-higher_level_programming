@@ -10,7 +10,7 @@ if __name__ == '__main__':
 
     try:
         r = requests.get("https://api.github.com/user",
-                         auth=(argv[1], argv[2]))
+                         auth=(LinusMatola, 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))
         file = r.json()
         print(file['id'])
     except:
