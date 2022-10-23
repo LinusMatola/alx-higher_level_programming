@@ -1,17 +1,17 @@
 #!/usr/bin/python3
-"""
-takes my Github credentials and uses the Github API to display my id
-"""
+'''
+Takes your Github credentials (username and password) and uses
+the Github API to display your id
+'''
 
+import requests
+import sys
 
-if __name__ == '__main__':
-    import requests
-    from sys import argv
-
-    try:
-        r = requests.get("https://api.github.com/user",
-                         auth=(LinusMatola, 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))
-        file = r.json()
-        print(file['id'])
-    except:
-        print('None')
+if __name__ == "__main__":
+    url = 'https://api.github.com/user'
+    username = 'LinusMatola'
+    username = sys.argv[1]
+    token = sys.argv[2]
+    headers = {'Authorization': 'token {}'.format(token)}
+    req = requests.get(url, headers=headers)
+    print(req.json().get('id'))
