@@ -1,12 +1,24 @@
 #!/usr/bin/node
-const req = require('request');
-const url = 'https://swapi.co/api/films/' + process.argv[2];
-req(url, function (error, response, body) {
-  if (error) { console.log(error); }
-  JSON.parse(body).characters.forEach(function (peeps) {
-    req(peeps, function (error, response, body) {
-      if (error) { console.log(error); }
-      console.log(JSON.parse(body).name);
-    });
+const request = require('request');
+
+const url = 'http://swapi.co/api/films/' + process.argv[2];
+
+const first = function () {
+  request(url, function (error, response, body) {
+    if (error) throw error;
+    second(JSON.parse(body).characters, 0);
   });
-});
+};
+
+const second = function (characters, i) {
+  if (characters.length === i) {
+    return;
+  }
+  request(characters[i], function (error, response, body) {
+    if (error) throw error;
+    console.log(JSON.parse(body).name);
+    second(characters, ++i);
+  });
+};
+
+first();
