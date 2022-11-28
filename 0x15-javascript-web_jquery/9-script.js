@@ -1,7 +1,7 @@
 $.ajax({
   url: 'https://fourtonfish.com/hellosalut/',
   data: {
-    lang: 'en'
+    lang: 'fr'
   },
   type: 'GET',
   dataType: 'json'
